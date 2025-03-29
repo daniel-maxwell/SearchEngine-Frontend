@@ -11,10 +11,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Logo } from './Logo';
 
 export function SearchHeader({ initialQuery = '' }: { initialQuery: string }) {
   // State to track the current search query
   const [query, setQuery] = useState(initialQuery);
+  const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
 
   /**
@@ -31,33 +33,38 @@ export function SearchHeader({ initialQuery = '' }: { initialQuery: string }) {
   };
 
   return (
-    <header className="sticky top-0 bg-white shadow-sm z-10 py-4">
-      <div className="max-w-5xl mx-auto px-4 flex items-center gap-4">
+    <header className="sticky top-0 bg-[#f5f5f5] z-10 py-3 border-b border-neutral-200 shadow-sm">
+      {/* Subtle rose-colored top border accent */}
+      <div className="h-0.5 absolute top-0 left-0 right-0 bg-gradient-to-r from-rose-200 via-rose-400 to-rose-200" />
+      
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center gap-4">
         {/* Logo with link to home page */}
-        <Link href="/" className="text-2xl font-bold">
-          <span className="text-rose-500">R</span>
-          <span className="text-rose-400">O</span>
-          <span className="text-rose-300">S</span>
-          <span className="text-rose-200">E</span>
+        <Link href="/" className="flex-shrink-0">
+          <Logo size="medium" />
         </Link>
         
-        {/* Search form */}
-        <form onSubmit={handleSubmit} className="flex-1 max-w-2xl">
-          <div className="relative">
-            {/* Search input */}
+      {/* Compact search form */}
+      <form onSubmit={handleSubmit} className="flex-1 flex justify-center">
+          <div className="relative w-full max-w-xl">
             <input
               type="text"
-              className="w-full p-2 pl-4 pr-10 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-rose-300 focus:border-transparent"
-              placeholder="Refine your search..."
+              className={`w-full pl-4 pr-10 py-2.5 rounded-full border ${
+                isFocused 
+                  ? 'border-rose-200 shadow-sm' 
+                  : 'border-neutral-200'
+              } outline-none transition-all duration-200 text-neutral-800 placeholder-neutral-400`}
+              placeholder="Search the web..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
               aria-label="Search query"
             />
             
             {/* Search button */}
             <button
               type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-rose-500 text-white hover:bg-rose-600 transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-rose-300 text-white hover:bg-rose-400 transition-colors duration-200"
               aria-label="Search"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -7,6 +7,7 @@
  * Shows current page, total pages, and buttons for next/previous pages.
  * 
  */
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -19,47 +20,24 @@ interface PaginationProps {
 export function Pagination({ currentPage, totalPages, query }: PaginationProps) {
   const router = useRouter();
   
-  /**
-   * Creates the URL for a specific page number
-   * while preserving the search query
-   * 
-   * @param {number} page - The page number to navigate to
-   * @returns {string} The URL for the specified page
-   */
   const getPageUrl = (page: number) => {
     return `/search?q=${encodeURIComponent(query)}&page=${page}`;
   };
 
-  /**
-   * Generates a range of page numbers to display,
-   * showing pages around the current page
-   * 
-   * @returns {number[]} Array of page numbers to display
-   */
   const getPageNumbers = () => {
-    // For smaller page counts, show all pages
+    // Pagination logic
     if (totalPages <= 7) {
       return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
     
-    // For larger page counts, show pages around current page with ellipsis
-    let pages: (number | string)[] = [1];
+    let pages = [1];
     
-    // Logic to determine which page numbers to show
     if (currentPage < 5) {
-      pages = [...pages, 2, 3, 4, 5, '...', totalPages];
+      pages = [1, 2, 3, 4, 5, 0, totalPages];
     } else if (currentPage > totalPages - 4) {
-      pages = [...pages, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+      pages = [1, 0, totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
     } else {
-      pages = [
-        ...pages,
-        '...',
-        currentPage - 1,
-        currentPage,
-        currentPage + 1,
-        '...',
-        totalPages,
-      ];
+      pages = [1, 0, currentPage - 1, currentPage, currentPage + 1, 0, totalPages, ];
     }
     
     return pages;
@@ -68,56 +46,60 @@ export function Pagination({ currentPage, totalPages, query }: PaginationProps) 
   const pageNumbers = getPageNumbers();
 
   return (
-    <nav className="flex justify-center py-8" aria-label="Pagination">
-      <ul className="flex items-center gap-1">
-        {/* Previous page button */}
-        {currentPage > 1 && (
-          <li>
-            <Link 
+    <nav className="pt-10 pb-8" aria-label="Pagination">
+      {/* Page navigation with rose accent for current page */}
+      <div className="flex justify-center text-sm">
+        <div className="inline-flex shadow-sm -space-x-px rounded-xl overflow-hidden">
+          {/* Previous page button */}
+          {currentPage > 1 && (
+            <Link
               href={getPageUrl(currentPage - 1)}
-              className="px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
-              aria-label="Go to previous page"
+              className="px-4 py-2 border border-neutral-200 bg-neutral-50 text-neutral-400 hover:bg-neutral-50 transition-colors"
+              aria-label="Previous page"
             >
-              <span aria-hidden="true">&laquo;</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
             </Link>
-          </li>
-        )}
-        
-        {/* Page number buttons */}
-        {pageNumbers.map((page, index) => (
-          <li key={index}>
-            {typeof page === 'number' ? (
-              <Link
-                href={getPageUrl(page)}
-                className={`px-3 py-2 rounded-md ${
-                  currentPage === page
-                    ? 'bg-rose-500 text-white font-medium'
-                    : 'hover:bg-gray-100 text-gray-700'
-                }`}
-                aria-current={currentPage === page ? 'page' : undefined}
-              >
-                {page}
-              </Link>
-            ) : (
-              // Ellipsis for skipped pages
-              <span className="px-3 py-2 text-gray-500">...</span>
-            )}
-          </li>
-        ))}
-        
-        {/* Next page button */}
-        {currentPage < totalPages && (
-          <li>
+          )}
+          
+          {/* Page numbers */}
+          {pageNumbers.map((page, index) => (
+            <React.Fragment key={index}>
+              {page !== 0 ? (
+                <Link
+                  href={getPageUrl(page)}
+                  className={`px-4 py-2 border border-neutral-200 ${
+                    currentPage === page
+                      ? 'bg-rose-300 text-white border-neutral-200'
+                      : 'bg-[#f5f5f5] text-neutral-600 hover:bg-neutral-50'
+                  } transition-colors`}
+                  aria-current={currentPage === page ? 'page' : undefined}
+                >
+                  {page}
+                </Link>
+              ) : (
+                <span className="px-4 py-2 border border-neutral-200 bg-[#f5f5f5] text-neutral-600">
+                  …
+                </span>
+              )}
+            </React.Fragment>
+          ))}
+          
+          {/* Next page button */}
+          {currentPage < totalPages && (
             <Link
               href={getPageUrl(currentPage + 1)}
-              className="px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
-              aria-label="Go to next page"
+              className="px-4 py-2 border border-neutral-200 bg-[#f5f5f5] text-neutral-400 hover:bg-neutral-50 transition-colors"
+              aria-label="Next page"
             >
-              <span aria-hidden="true">&raquo;</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </Link>
-          </li>
-        )}
-      </ul>
+          )}
+        </div>
+      </div>
     </nav>
   );
 }

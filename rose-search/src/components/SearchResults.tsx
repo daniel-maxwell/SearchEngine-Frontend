@@ -14,28 +14,30 @@ interface SearchResult {
   description: string;
 }
 
+// Main SearchResults component
+// Accepts an array of search results and displays them in a structured format
 export function SearchResults({ results }: { results: SearchResult[] }) {
-  // If no results are found, show a message
   if (results.length === 0) {
     return (
-      <div className="py-8 text-center">
-        <p className="text-gray-600">No results found. Try different keywords.</p>
+      <div className="py-12 text-center">
+        <p className="text-neutral-600">No results found. Try different keywords.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       {results.map((result) => (
         <div key={result.id} className="max-w-3xl">
-          {/* URL display */}
-          <div className="text-sm text-gray-600 truncate">{result.url}</div>
+          {/* URL display with breadcrumb-like format */}
+          <div className="text-sm text-neutral-600 mb-1 truncate">
+            {formatUrl(result.url)}
+          </div>
           
-          {/* Result title with link */}
-          <h2 className="text-xl font-medium mt-1">
+          {/* Result title with link styling */}
+          <h2 className="text-xl text-[#1a0dab] hover:underline font-normal leading-tight">
             <Link 
               href={result.url} 
-              className="text-blue-700 hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -43,10 +45,40 @@ export function SearchResults({ results }: { results: SearchResult[] }) {
             </Link>
           </h2>
           
-          {/* Result description */}
-          <p className="text-sm text-gray-700 mt-1 line-clamp-2">{result.description}</p>
+          {/* Result description with proper line height */}
+          <p className="mt-1 text-sm text-neutral-700 leading-relaxed">
+            {result.description}
+          </p>
         </div>
       ))}
     </div>
   );
+}
+
+/**
+ * Format URL for display
+ */
+function formatUrl(url: string): React.ReactNode {
+  try {
+    const urlObj = new URL(url);
+    const domain = urlObj.hostname;
+    let path = urlObj.pathname;
+    
+    // Truncate path if too long
+    if (path.length > 50) {
+      const parts = path.split('/').filter(Boolean);
+      if (parts.length > 3) {
+        path = '/' + parts.slice(0, 2).join('/') + '/...';
+      }
+    }
+    
+    return (
+      <>
+        <span className="text-neutral-500">{domain}</span>
+        <span className="text-neutral-400">{path}</span>
+      </>
+    );
+  } catch (e) {
+    return url;
+  }
 }
