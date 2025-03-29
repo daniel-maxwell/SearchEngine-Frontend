@@ -79,6 +79,7 @@ function formatUrl(url: string): React.ReactNode {
       </>
     );
   } catch (e) {
+    console.error('Invalid URL:', url, e);
     return url;
   }
 }

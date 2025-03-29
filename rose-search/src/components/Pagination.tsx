@@ -8,7 +8,6 @@
  * 
  */
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 interface PaginationProps {
@@ -18,7 +17,6 @@ interface PaginationProps {
 }
 
 export function Pagination({ currentPage, totalPages, query }: PaginationProps) {
-  const router = useRouter();
   
   const getPageUrl = (page: number) => {
     return `/search?q=${encodeURIComponent(query)}&page=${page}`;

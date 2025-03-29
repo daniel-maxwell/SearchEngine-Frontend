@@ -17,9 +17,8 @@ const RESULTS_PER_PAGE = 10;
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; page?: string }> | { q?: string; page?: string };
+  searchParams: Promise<{ q?: string; page?: string }>;
 }) {
-  // Await searchParams before using its properties
   const params = await searchParams;
   const query = params.q || '';
   const currentPage = Number(params.page || '1');
