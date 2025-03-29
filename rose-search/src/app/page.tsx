@@ -15,7 +15,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-center p-4">
       {/* Content wrapper with maximum width constraint for larger screens */}
       <div className="w-full max-w-2xl flex flex-col items-center gap-8">
-        {/* ROSE logo displayed prominently above search */}
+        {/* ROSE logo */}
         <Logo />
         
         {/* Primary search interface component */}
